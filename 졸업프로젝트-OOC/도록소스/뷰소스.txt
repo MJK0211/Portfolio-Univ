@@ -1,0 +1,16 @@
+21. Master Volume
+22. Slow Tempo
+23. Reverb
+24. Echo 
+25. Sweep
+26. Motion Shape
+27. Loop
+
+
+41. Sound Tracking Panning 
+42. Overdrive
+43. LFO Frequency
+44. Pingpong Delay
+45. Flanger
+46. Robot
+47. Glitch

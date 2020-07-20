@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <iostream>
+#include <opencv\cv.h>
+#include <opencv\cxcore.h>
+#include <opencv\highgui.h>
+using namespace cv;
+void main()
+{
+	IplImage* frame;//영상을 IplImage형으로 출력해야 함 
+	CvCapture* capture = cvCaptureFromCAM(0);//(0)-내장카메라
+	IplImage * gray_image;//흑백으로 담을 변수
+	IplImage * Edge = 0;//cvcanny함수 적용할 변수
+	CvMemStorage *storage;
+	CvSeq *circles = 0;
+	float *p;
+	cvNamedWindow("Video", 0);
+	cvNamedWindow("black", 0);
+	cvNamedWindow("edge", 0);
+
+	cvResizeWindow("Video", 600, 400);//크기 변경
+	cvResizeWindow("black", 600, 400);
+	cvResizeWindow("edge", 600, 400);
+	while (1)
+	{
+		cvGrabFrame(capture);//카메라에서 프레임을 가져옴/
+		frame = cvRetrieveFrame(capture);//cvGrabFrame에서 가져온 프레임을 IplImage 구조체에 저장
+		cvFlip(frame, frame, 1);//영상 좌우 반전  		
+		cvSmooth(frame, frame, CV_GAUSSIAN, 5, 5);//Gausian blur 필터 적용
+		gray_image = cvCreateImage(cvGetSize(frame), 8, 1);//원본 컬러 이미지의 크기만큼 이미지 영역 생성  //1은 단일 채널ㄺ
+		cvCvtColor(frame, gray_image, CV_RGB2GRAY);// 원본 이미지를 흑백영상으로 바꿔 gray_image 공간에 copy
+
+		cvThreshold(gray_image, gray_image, 150.0, 255.0, CV_THRESH_BINARY); //이진화
+																			 //CV_THRESH_BINARY_INV 이진화 반전
+																			 //cvThreshold(원본, 저장소, 트레숄더, 최대값, 트레숄더 타입);
+
+		Edge = cvCreateImage(cvGetSize(gray_image), 8, 1);//Edge에 흑백영상 크기만큼 영역 생성 1채널
+		cvCanny(gray_image, Edge, 50, 200, 3);//cvCanny함수는 단일채널이어야 해서 흑백영상 써야함
+
+		storage = cvCreateMemStorage(0);
+		circles = cvHoughCircles(Edge, storage, CV_HOUGH_GRADIENT, 1, 100, 200, 25, 30, 50);//MAX(Edge->width,Edge->height));//Edge에서 원 찾기
+
+		for (int k = 0; k<circles->total; k++)
+		{
+			int cx, cy, radius;
+			int R,G,B;
+			p = (float*)cvGetSeqElem(circles, k);
+			cx = cvRound(p[0]);
+			cy = cvRound(p[1]);
+			radius = cvRound(p[2]);
+			CvScalar v = cvGet2D(frame, cy, cx);
+
+			cvCircle(frame, cvPoint(cx,cy), 3, CV_RGB(0, 0, 255), -1, 8, 0); // 원 검출 및 그리기
+			cvCircle(frame, cvPoint(cx,cy),radius, CV_RGB(255, 0, 0), 3, 8, 0); // 원 검출 및 그리기2
+			printf("circle[%d]=(cx,cy,radius)=(%d,%d, %d) \n", k, cx, cy, radius); // 좌표값 검출(인덱스, x, y, r)
+			
+			B = v.val[0];// 이미지에 j,i 좌표의 Blue 성분 추출
+			G = v.val[1]; // 이미지에 j,i 좌표의 Green 성분 추출
+			R = v.val[2]; // 이미지에 j,i 좌표의 Red 성분 추출
+			printf("R: %d / G: %d/ B: %d \n", R, G, B);
+		}
+
+		if (!frame)
+			break;
+
+		cvShowImage("Video", frame);
+		cvShowImage("black", gray_image);
+		cvShowImage("edge", Edge);
+		if (cvWaitKey(100) == 27)//esc 누르면 종료
+			break;
+	}
+	cvReleaseCapture(&capture);
+	cvDestroyWindow("Video");
+	cvDestroyWindow("black");
+	cvDestroyWindow("edge");	
+}
+
+

@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>사용자 가입</title>
+</head>
+<body >
+<Script Language="JAVAScript">
+function check()
+{
+	var blank = 0 ;
+	if (FORM1.id.value == "") 
+		blank = 1 ;
+	if (FORM1.pass.value == "") 
+		blank = 1 ;
+	if (FORM1.name.value == "")
+		blank = 1 ;
+	if (blank ==1)
+	{
+		alert("빈란이 있습니다. 채워주세요.") ;
+		return (false)
+	}
+	else
+	{
+		return (true) ;
+	}
+}
+</Script>
+<p align="center">
+<font size="6">
+<b>사용자 가입<br> 
+<br>
+<br>
+<form name="FORM1" action="register.asp" method="post" onsubmit="return check();">
+<div align="center">
+<table border=0 cellpadding="2" cellspacing="0" bordercolordark="eeeeee" bordercolorlight="#464646">
+<tr>
+<td width="99" align=right>
+<p><font color="red" size="2">사용자 ID</font></td>
+<td width="215"><p><font size="2">
+<input type="text" name="id" maxlength="10" size="10">
+</font>
+</td>
+<td width="364"><p>
+<font size="2">(10자이하, 한글/영문/숫자 혼용가능, 대소문자 구분없음)</font></td>
+</tr>
+<tr>
+<td width="99" align=right><p>
+<font color="red" size="2">비밀번호</font></td>
+<td width="200"><p><font size="2">
+<input type="password" name="pass" maxlength="20">
+</font></td>
+<td width="364"><p><font size="2">(입력시 CapsLock키 확인후 입력)</font></td>
+</tr>
+<tr>
+<td width="99" align=right><p>
+<font color="red" size="2">이름</font></td>
+<td width="200"><p><font size="2">
+<input type="text" name="name" maxlength="20">
+</font></td><td width="364"><p>
+<font size="2">본인의 <b>실명</b>을 입력 하십시오
+</font></td></tr>
+<tr>
+<td colspan=3>&nbsp;<br>
+<br>
+</td>
+</tr>
+<tr>
+<td width="680" align="center" colspan="3" ><p>
+<font size="2">
+<input type="submit" name="submit" value=" 가입하기 ">
+<input type="reset" name="cancel" value=" 가입취소 ">
+</font>
+</td>
+</tr>
+</table></div></form>
+<br><br><br>
+<center><a href="index.html">
+<font color=blue>처음화면</font></a></center>
+</body>
